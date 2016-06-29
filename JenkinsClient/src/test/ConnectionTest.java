@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * The Connection test.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class ConnectionTest {

@@ -3,7 +3,7 @@ package gui;
 /**
  * The User interface mode main class.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class UserInterfaceModeMain {

@@ -5,7 +5,7 @@ import util.Constants;
 /**
  * Launches JenkinsClient in User Interface mode.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class JenkinsClientUserInterface {

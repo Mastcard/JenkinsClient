@@ -3,7 +3,7 @@ package engine;
 /**
  * The class Connection.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class Connection {

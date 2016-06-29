@@ -5,7 +5,7 @@ import util.Constants;
 /**
  * Launches JenkinsClient in console mode.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class JenkinsClientConsole {

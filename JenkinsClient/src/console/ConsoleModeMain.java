@@ -3,7 +3,7 @@ package console;
 /**
  * The Console mode main class.
  * 
- * @author I312791
+ * @author mastcard
  *
  */
 public class ConsoleModeMain {
