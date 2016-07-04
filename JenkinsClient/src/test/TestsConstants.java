@@ -27,6 +27,7 @@ class TestsConstants {
 	
 	public static final String UNUSED_JOB_NAME = "unused job";
 	
+	
 	/* ######################### */
 	/* #### COPY CONSTANTS. #### */
 	/* ######################### */

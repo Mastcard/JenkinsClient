@@ -121,4 +121,19 @@ public class JobManagerTest {
 		
 	}
 	
+	@Test
+	public void testCopyJobReplacingPatternsWithWrongJobName() {
+		String newJobName = null;
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		
+		try {
+			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.WRONG_JOB_TO_COPY_NAME, patterns);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JobNotFoundException e) {
+			e.printStackTrace();
+		}
+		assertNull(newJobName);
+	}
+	
 }
