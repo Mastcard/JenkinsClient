@@ -6,7 +6,7 @@ package exception;
  * @author mastcard
  *
  */
-public class JenkinsNotRunningException extends Exception {
+public class JenkinsConnectionFailedException extends Exception {
 
 	/** The default Serial UID. */
 	private static final long serialVersionUID = 1L;
@@ -19,8 +19,8 @@ public class JenkinsNotRunningException extends Exception {
 	 * 
 	 * @param server
 	 */
-	public JenkinsNotRunningException(String server) {
-		message = "The server " + server + " is not running or doesn't exist.";
+	public JenkinsConnectionFailedException(String server) {
+		message = "The connection to the server " + server + " failed.\nCheck your server name, your credentials, and retry.";
 	}
 	
 	/**
