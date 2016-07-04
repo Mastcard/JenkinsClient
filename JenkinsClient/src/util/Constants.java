@@ -31,6 +31,14 @@ public class Constants {
 	public static final String USER_INTERFACE_MODE_STRING = MODE_STRING + " : " + USER_INTERFACE_STRING;
 	
 	
+	/* ############################ */	
+	/* #### JENKINS CONSTANTS. #### */
+	/* ############################ */
+	
+	/** The all jobs view name. */
+	public static final String ALL_JOBS_VIEW_NAME = "All";
+	
+	
 	/* ########################## */	
 	/* #### LABEL CONSTANTS. #### */
 	/* ########################## */
@@ -45,9 +53,9 @@ public class Constants {
 	public static final String PASSWORD_LABEL = "Password";
 	
 	
-	/* ########################## */
+	/* ################################# */
 	/* #### ACTION LABEL CONSTANTS. #### */
-	/* ########################## */
+	/* ################################# */
 	
 	/** The CONNECT ACTION LABEL. */
 	public static final String CONNECT_ACTION_LABEL = "Connect";

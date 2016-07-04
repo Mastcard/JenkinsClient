@@ -20,6 +20,7 @@ public class JenkinsConnectionFailedException extends Exception {
 	 * @param server
 	 */
 	public JenkinsConnectionFailedException(String server) {
+		super();
 		message = "The connection to the server " + server + " failed.\nCheck your server name, your credentials, and retry.";
 	}
 	

@@ -12,7 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	ConnectionTest.class
+	ConnectionManagerTest.class,
+	JobManagerTest.class
 })
 
 public class JenkinsClientTestSuite {

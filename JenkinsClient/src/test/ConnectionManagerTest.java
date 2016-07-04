@@ -12,26 +12,18 @@ import engine.ConnectionManager;
 import exception.JenkinsConnectionFailedException;
 
 /**
- * The Connection test.
+ * The Connection Manager test.
  * 
  * @author mastcard
  *
  */
-public class ConnectionTest {
+public class ConnectionManagerTest {
 
 	private JenkinsServer jenkinsServer;
 	
-	private static final String SERVER = "http://localhost:8080";
-	private static final String USERNAME = "mastcard";
-	private static final String PASSWORD = "password";
-	
-	private static final String WRONG_SERVER = "http://localhost:8888";
-	private static final String WRONG_USERNAME = "username";
-	private static final String WRONG_PASSWORD = "Password";
-	
 	@Test
 	public void testLogOnJenkins() {
-		jenkinsServer = logOn(SERVER, USERNAME, PASSWORD);
+		jenkinsServer = logOn(TestsConstants.SERVER, TestsConstants.USERNAME, TestsConstants.PASSWORD);
 		assertNotNull(jenkinsServer);
 	}
 	
@@ -39,19 +31,19 @@ public class ConnectionTest {
 	
 	@Test
 	public void testLogOnJenkinsWithWrongServer() {
-		jenkinsServer = logOn(WRONG_SERVER, USERNAME, PASSWORD);
+		jenkinsServer = logOn(TestsConstants.WRONG_SERVER, TestsConstants.USERNAME, TestsConstants.PASSWORD);
 		assertNull(jenkinsServer);
 	}
 	
 	@Test
 	public void testLogOnJenkinsWithWrongUserName() {
-		jenkinsServer = logOn(SERVER, WRONG_USERNAME, PASSWORD);
+		jenkinsServer = logOn(TestsConstants.SERVER, TestsConstants.WRONG_USERNAME, TestsConstants.PASSWORD);
 		assertNull(jenkinsServer);
 	}
 	
 	@Test
 	public void testLogOnJenkinsWithWrongPassword() {
-		jenkinsServer = logOn(SERVER, USERNAME, WRONG_PASSWORD);
+		jenkinsServer = logOn(TestsConstants.SERVER, TestsConstants.USERNAME, TestsConstants.WRONG_PASSWORD);
 		assertNull(jenkinsServer);
 	}
 	
