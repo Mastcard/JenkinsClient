@@ -14,6 +14,7 @@ import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.View;
 
+import exception.EmptyRegexpException;
 import exception.JobNotFoundException;
 import exception.SeveralJobsWithSameNameInViewException;
 
@@ -81,15 +82,65 @@ public class JobManager {
 	}
 	
 	/**
+	 * Gets jobs with regexp.
+	 * 
+	 * @return jobs map
+	 * @throws IOException 
+	 * @throws EmptyRegexpException 
+	 */
+	public Map<String, Job> getJobsWithRegexp(String regexp) throws IOException, EmptyRegexpException {
+		if (regexp == null || regexp.isEmpty()) {
+			throw new EmptyRegexpException();
+		}
+		
+		Map<String, Job> jobs = JenkinsUtil.getJobs(jenkinsServer);
+		Map<String, Job> jobsWithRegexp = new HashMap<String, Job>();
+		
+		for (Iterator<Job> it = jobs.values().iterator(); it.hasNext(); ) {
+			Job job = it.next();
+			if (job.getName().matches(regexp)) {
+				jobsWithRegexp.put(job.getName(), job);
+			}
+		}
+		
+		return jobsWithRegexp;
+	}
+	
+	/**
+	 * Filters jobs with regexp.
+	 * 
+	 * @param jobs
+	 * @param regexp
+	 * @return the jobs maps
+	 * @throws EmptyRegexpException
+	 */
+	public Map<String, Job> filterJobsWithRegexp(Map<String, Job> jobs, String regexp) throws EmptyRegexpException {
+		if (regexp == null || regexp.isEmpty()) {
+			throw new EmptyRegexpException();
+		}
+
+		Map<String, Job> jobsWithRegexp = new HashMap<String, Job>();
+		
+		for (Iterator<Job> it = jobs.values().iterator(); it.hasNext(); ) {
+			Job job = it.next();
+			if (job.getName().matches(regexp)) {
+				jobsWithRegexp.put(job.getName(), job);
+			}
+		}
+		
+		return jobsWithRegexp;
+	}
+	
+	/**
 	 * Copies job replacing patterns.
 	 * 
-	 * @param jobName the name of th job to copy
+	 * @param jobName the name of the job to copy
 	 * @param patterns the patterns with old and new content
 	 * @return the new job name
 	 * @throws IOException
 	 * @throws JobNotFoundException
 	 */
-	public String copyJobReplacingPatterns(String jobName, List<Pattern> patterns) throws IOException, JobNotFoundException {
+	public String copyJobReplacingPatterns(String jobName, List<Pattern> patterns, boolean execute) throws IOException, JobNotFoundException {
 		Job jobToCopy = jenkinsServer.getJob(jobName);
 		if (jobToCopy == null) {
 			throw new JobNotFoundException(jobName);
@@ -105,8 +156,10 @@ public class JobManager {
 			newJobXml = newJobXml.replaceAll(pattern.getBefore(), pattern.getAfter());
 		}
 		
-		jenkinsServer.createJob(newJobName, newJobXml);
-		
+		if (execute) {
+			jenkinsServer.createJob(newJobName, newJobXml);
+		}
+
 		return newJobName;
 	}
 	

@@ -19,11 +19,10 @@ class TestsConstants {
 	public static final String WRONG_SERVER = "http://localhost:8888";
 	public static final String WRONG_USERNAME = "username";
 	public static final String WRONG_PASSWORD = "Password";
-	
 
-	/* ######################### */
-	/* #### COPY CONSTANTS. #### */
-	/* ######################### */
+	/* ########################### */
+	/* #### UNUSED CONSTANTS. #### */
+	/* ########################### */
 	
 	public static final String UNUSED_JOB_NAME = "unused job";
 	
@@ -38,5 +37,15 @@ class TestsConstants {
 	public static final String COPIED_JOB_NAME = "(win64_x64) " + BRANCH_PATTERN_AFTER + " Fetch+Compile";
 	
 	public static final String WRONG_JOB_TO_COPY_NAME = "(win64_x64) unfound job";
+	
+	
+	/* ############################ */
+	/* #### COMMAND CONSTANTS. #### */
+	/* ############################ */
+	
+	public static final String BEFORE_PATTERN1 = "trunk-dev";
+	public static final String AFTER_PATTERN1 = "4.2-SP02_Patch_COR";
+	public static final String BEFORE_PATTERN2 = "machineA";
+	public static final String AFTER_PATTERN2 = "computerB";
 	
 }

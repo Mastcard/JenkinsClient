@@ -18,6 +18,7 @@ import com.offbytwo.jenkins.model.Job;
 
 import engine.ConnectionManager;
 import engine.JobManager;
+import exception.EmptyRegexpException;
 import exception.JenkinsConnectionFailedException;
 import exception.JobNotFoundException;
 import exception.SeveralJobsWithSameNameInViewException;
@@ -73,6 +74,74 @@ public class JobManagerTest {
 	}
 	
 	/**
+	 * Tests get jobs with regexp.
+	 */
+	@Test
+	public void testGetJobsWithRegexp() {
+		Map<String, Job> jobsWithRegexp = null;
+		
+		try {
+			jobsWithRegexp = jobManager.getJobsWithRegexp(".*trunk-dev.*");
+		} catch (IOException | EmptyRegexpException e) {
+			e.printStackTrace();
+		}
+		
+		assertNotNull(jobsWithRegexp);
+		assertFalse(jobsWithRegexp.isEmpty());
+		assertEquals(2, jobsWithRegexp.size());
+		assertFalse(!jobsWithRegexp.containsKey("(win64_x64) trunk-dev Fetch+Compile"));
+		assertFalse(!jobsWithRegexp.containsKey("(tests) (win64_x64) trunk-dev unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey("(win64_x64) 4.1-SP_COR Fetch+Compile"));
+		assertFalse(jobsWithRegexp.containsKey("(tests) (win64_x64) 4.1-SP_COR unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey(TestsConstants.UNUSED_JOB_NAME));
+		
+		try {
+			jobsWithRegexp = jobManager.filterJobsWithRegexp(jobsWithRegexp, ".*Comp.*");
+		} catch (EmptyRegexpException e1) {
+			e1.printStackTrace();
+		}
+		
+		assertNotNull(jobsWithRegexp);
+		assertFalse(jobsWithRegexp.isEmpty());
+		assertEquals(1, jobsWithRegexp.size());
+		assertFalse(!jobsWithRegexp.containsKey("(win64_x64) trunk-dev Fetch+Compile"));
+		assertFalse(jobsWithRegexp.containsKey("(tests) (win64_x64) trunk-dev unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey("(win64_x64) 4.1-SP_COR Fetch+Compile"));
+		assertFalse(jobsWithRegexp.containsKey("(tests) (win64_x64) 4.1-SP_COR unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey(TestsConstants.UNUSED_JOB_NAME));
+		
+		try {
+			jobsWithRegexp = jobManager.getJobsWithRegexp(".*4.1.*");
+		} catch (IOException | EmptyRegexpException e) {
+			e.printStackTrace();
+		}
+		
+		assertNotNull(jobsWithRegexp);
+		assertFalse(jobsWithRegexp.isEmpty());
+		assertEquals(2, jobsWithRegexp.size());
+		assertFalse(jobsWithRegexp.containsKey("(win64_x64) trunk-dev Fetch+Compile"));
+		assertFalse(jobsWithRegexp.containsKey("(tests) (win64_x64) trunk-dev unit-tests"));
+		assertFalse(!jobsWithRegexp.containsKey("(win64_x64) 4.1-SP_COR Fetch+Compile"));
+		assertFalse(!jobsWithRegexp.containsKey("(tests) (win64_x64) 4.1-SP_COR unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey(TestsConstants.UNUSED_JOB_NAME));
+		
+		try {
+			jobsWithRegexp = jobManager.filterJobsWithRegexp(jobsWithRegexp, ".*tests.*");
+		} catch (EmptyRegexpException e1) {
+			e1.printStackTrace();
+		}
+		
+		assertNotNull(jobsWithRegexp);
+		assertFalse(jobsWithRegexp.isEmpty());
+		assertEquals(1, jobsWithRegexp.size());
+		assertFalse(jobsWithRegexp.containsKey("(win64_x64) trunk-dev Fetch+Compile"));
+		assertFalse(jobsWithRegexp.containsKey("(tests) (win64_x64) trunk-dev unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey("(win64_x64) 4.1-SP_COR Fetch+Compile"));
+		assertFalse(!jobsWithRegexp.containsKey("(tests) (win64_x64) 4.1-SP_COR unit-tests"));
+		assertFalse(jobsWithRegexp.containsKey(TestsConstants.UNUSED_JOB_NAME));
+	}
+	
+	/**
 	 * Tests copy job replacing patterns.
 	 */
 	@Test
@@ -90,7 +159,7 @@ public class JobManagerTest {
 		//
 		String newJobName = null;
 		try {
-			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.JOB_TO_COPY_NAME, patterns);
+			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.JOB_TO_COPY_NAME, patterns, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JobNotFoundException e) {
@@ -127,7 +196,7 @@ public class JobManagerTest {
 		List<Pattern> patterns = new ArrayList<Pattern>();
 		
 		try {
-			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.WRONG_JOB_TO_COPY_NAME, patterns);
+			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.WRONG_JOB_TO_COPY_NAME, patterns, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JobNotFoundException e) {
