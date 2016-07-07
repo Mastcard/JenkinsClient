@@ -1,5 +1,11 @@
 package model;
 
+import java.io.IOException;
+
+import exception.JobNotFoundException;
+import exception.NoJobsToCopyException;
+import exception.NoPatternsException;
+
 /**
  * The class Action.
  * 
@@ -31,15 +37,23 @@ public abstract class Action {
 	
 	/**
 	 * Execute.
+	 * @throws NoJobsToCopyException 
+	 * @throws JobNotFoundException 
+	 * @throws IOException 
+	 * @throws NoPatternsException 
 	 */
-	public abstract void run();
+	public abstract void run() throws NoJobsToCopyException, IOException, JobNotFoundException, NoPatternsException;
 	
 	/**
 	 * Preview.
 	 * 
 	 * @return preview of the result
+	 * @throws JobNotFoundException 
+	 * @throws IOException 
+	 * @throws NoJobsToCopyException 
+	 * @throws NoPatternsException 
 	 */
-	public abstract String preview();
+	public abstract String preview() throws IOException, JobNotFoundException, NoJobsToCopyException, NoPatternsException;
 	
 	/**
 	 * Is execution enabled.

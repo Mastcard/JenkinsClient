@@ -20,7 +20,9 @@ import engine.ConnectionManager;
 import engine.JobManager;
 import exception.EmptyRegexpException;
 import exception.JenkinsConnectionFailedException;
+import exception.JobAlreadyExistsException;
 import exception.JobNotFoundException;
+import exception.NullServerNameException;
 import exception.SeveralJobsWithSameNameInViewException;
 
 /**
@@ -46,6 +48,8 @@ public class JobManagerTest {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (JenkinsConnectionFailedException e) {
+			e.printStackTrace();
+		} catch (NullServerNameException e) {
 			e.printStackTrace();
 		}
 		
@@ -164,6 +168,8 @@ public class JobManagerTest {
 			e.printStackTrace();
 		} catch (JobNotFoundException e) {
 			e.printStackTrace();
+		} catch (JobAlreadyExistsException e) {
+			e.printStackTrace();
 		}
 		assertNotNull(newJobName);
 		assertEquals(TestsConstants.COPIED_JOB_NAME, newJobName);
@@ -200,6 +206,8 @@ public class JobManagerTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JobNotFoundException e) {
+			e.printStackTrace();
+		} catch (JobAlreadyExistsException e) {
 			e.printStackTrace();
 		}
 		assertNull(newJobName);

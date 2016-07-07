@@ -1,9 +1,17 @@
 package main;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import console.ConsoleModeMain;
+import exception.EmptyRegexpException;
+import exception.JenkinsConnectionFailedException;
+import exception.JobNotFoundException;
+import exception.NoJobsToCopyException;
+import exception.NoPatternsException;
+import exception.NullServerNameException;
 import exception.UnknownActionException;
 import exception.WrongCommandException;
-import util.Constants;
 
 /**
  * Launches JenkinsClient in console mode.
@@ -14,13 +22,18 @@ import util.Constants;
 public class JenkinsClientConsole {
 
 	public static void main(String[] args) {
-		System.out.println(Constants.PROJECT_NAME + " (" + Constants.CONSOLE_MODE_STRING + ")");
 		ConsoleModeMain consoleModeMain = new ConsoleModeMain();
 		
 		try {
 			consoleModeMain.executeCommand(args);
-		} catch (WrongCommandException | UnknownActionException e) {
-			e.printStackTrace();
+		} catch (WrongCommandException | UnknownActionException | IOException
+				| EmptyRegexpException | URISyntaxException
+				| JenkinsConnectionFailedException | JobNotFoundException
+				| NoJobsToCopyException | NoPatternsException | NullServerNameException e) {
+			e.toString();
+			System.out.println();
+			consoleModeMain.printHelp();
+			System.exit(1);
 		}
 	}
 

@@ -15,6 +15,7 @@ import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.View;
 
 import exception.EmptyRegexpException;
+import exception.JobAlreadyExistsException;
 import exception.JobNotFoundException;
 import exception.SeveralJobsWithSameNameInViewException;
 
@@ -139,8 +140,12 @@ public class JobManager {
 	 * @return the new job name
 	 * @throws IOException
 	 * @throws JobNotFoundException
+	 * @throws JobAlreadyExistsException 
 	 */
-	public String copyJobReplacingPatterns(String jobName, List<Pattern> patterns, boolean execute) throws IOException, JobNotFoundException {
+	public String copyJobReplacingPatterns(String jobName,
+			List<Pattern> patterns, boolean execute)
+			throws JobNotFoundException, IOException, JobAlreadyExistsException {
+		
 		Job jobToCopy = jenkinsServer.getJob(jobName);
 		if (jobToCopy == null) {
 			throw new JobNotFoundException(jobName);
@@ -157,7 +162,50 @@ public class JobManager {
 		}
 		
 		if (execute) {
-			jenkinsServer.createJob(newJobName, newJobXml);
+			try {
+				jenkinsServer.createJob(newJobName, newJobXml, false);
+			} catch (IOException e) {
+				throw new JobAlreadyExistsException(newJobName);
+			}
+		}
+
+		return newJobName;
+	}
+	
+	/**
+	 * Copies job replacing patterns.
+	 * 
+	 * @param job the job to copy
+	 * @param patterns the patterns with old and new content
+	 * @return the new job name
+	 * @throws IOException
+	 * @throws JobNotFoundException
+	 * @throws JobAlreadyExistsException 
+	 */
+	public String copyJobReplacingPatterns(Job job, List<Pattern> patterns,
+			boolean execute) throws IOException, JobNotFoundException,
+			JobAlreadyExistsException {
+		
+		if (job == null) {
+			throw new JobNotFoundException("");
+		}
+		
+		String jobToCopyXml = jenkinsServer.getJobXml(job.getName());
+		String newJobName = job.getName();
+		String newJobXml = jobToCopyXml;
+		
+		for (int i = 0; i < patterns.size(); i++) {
+			Pattern pattern = patterns.get(i);
+			newJobName = newJobName.replaceAll(pattern.getBefore(), pattern.getAfter());
+			newJobXml = newJobXml.replaceAll(pattern.getBefore(), pattern.getAfter());
+		}
+		
+		if (execute) {
+			try {
+				jenkinsServer.createJob(newJobName, newJobXml, false);
+			} catch (IOException e) {
+				throw new JobAlreadyExistsException(newJobName);
+			}
 		}
 
 		return newJobName;

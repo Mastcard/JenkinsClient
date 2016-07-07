@@ -84,6 +84,12 @@ public class Constants {
 	/** The NO ANSWER. */
 	public static final String NO_ANSWER = "n";
 	
+	/** The RUN ACTION MESSAGE. */
+	public static final String RUN_ACTION_MESSAGE = "Running action :";
+	
+	/** The ACTION COMPLETED MESSAGE. */
+	public static final String ACTION_COMPLETED_MESSAGE = "Action completed !";
+	
 	/** The ASK CONFIRMATION MESSAGE. */
 	public static final String ASK_CONFIRMATION_MESSAGE = "Do you want to perform the action ? [" + YES_ANSWER + "|" + NO_ANSWER + "]";
 	
@@ -91,7 +97,7 @@ public class Constants {
 	public static final String CJRP_USAGE_MESSAGE = "\t" + COPY_JOBS_REPLACING_PATTERNS_ARG + " [regexp:jobs to copy] [before1/after1,before2/after2,...]";
 	
 	/** The REMOVE JOBS USAGE MESSAGE. */
-	public static final String RJ_USAGE_MESSAGE = "\t" + REMOVE_JOBS_ARG + " [regexp:jobs to remove]\n\t" + REMOVE_JOBS_ARG + " [unused]";
+	public static final String RJ_USAGE_MESSAGE = "\t" + REMOVE_JOBS_ARG + " [regexp:jobs to remove]\n\t\t\t" + REMOVE_JOBS_ARG + " [unused]";
 	
 	/** The FORCE USAGE MESSAGE. */
 	public static final String FORCE_USAGE_MESSAGE = "\tExecutes action without confirmation : -f";
@@ -99,11 +105,11 @@ public class Constants {
 	/** The HELP MESSAGE. */
 	public static final String HELP_MESSAGE = "This client is used to log on a Jenkins server and executes the following actions :\n"
 			+ "\tcopy jobs replacing patterns : " + CJRP_USAGE_MESSAGE + "\n"
-			+ "\t				  remove jobs : " + RJ_USAGE_MESSAGE + "\n"
-			+ "\t                        help : " + HELP_ARG + "\n"
-			+ FORCE_USAGE_MESSAGE + "\n\n"
-			+ "\tEXAMPLE : java -jar jenkins_client.jar " + SERVER_ARG + " HOST:PORT " + USERNAME_ARG + " USERNAME " + PASSWORD_ARG + " PASSWORD " 
-			+ CJRP_USAGE_MESSAGE + " .*trunk-dev.* trunk-dev/4.2-SP02_Patch_COR,...";
+			+ "\tremove jobs : " + RJ_USAGE_MESSAGE + "\n"
+			+ "\thelp : " + HELP_ARG + "\n"
+			+ FORCE_USAGE_MESSAGE + "\n"
+			+ "\tEXAMPLE : java -jar jenkins_client.jar " + SERVER_ARG + " http://HOST:PORT " + USERNAME_ARG + " USERNAME " + PASSWORD_ARG + " PASSWORD " 
+			+ ".*trunk-dev.* trunk-dev/4.2-SP02_Patch_COR,...";
 	
 	
 	/* ########################## */	

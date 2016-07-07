@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import com.offbytwo.jenkins.JenkinsServer;
 
 import exception.JenkinsConnectionFailedException;
+import exception.NullServerNameException;
 
 /**
  * The class Connection.
@@ -45,9 +46,14 @@ public class ConnectionManager {
 	 * @param password
 	 * @return
 	 * @throws URISyntaxException
+	 * @throws NullServerNameException 
 	 * @throws JenkinsNotRunningException 
 	 */
-	public JenkinsServer logOnJenkins() throws URISyntaxException, JenkinsConnectionFailedException {
+	public JenkinsServer logOnJenkins() throws URISyntaxException, JenkinsConnectionFailedException, NullServerNameException {
+		if (server == null) {
+			throw new NullServerNameException();
+		}
+		
 		URI uri = new URI(server);
 		JenkinsServer jenkinsServer = new JenkinsServer(uri, username, password);
 		

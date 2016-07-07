@@ -10,6 +10,7 @@ import com.offbytwo.jenkins.JenkinsServer;
 
 import engine.ConnectionManager;
 import exception.JenkinsConnectionFailedException;
+import exception.NullServerNameException;
 
 /**
  * The Connection Manager test.
@@ -60,6 +61,8 @@ public class ConnectionManagerTest {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (JenkinsConnectionFailedException e) {
+			e.printStackTrace();
+		} catch (NullServerNameException e) {
 			e.printStackTrace();
 		}
 		

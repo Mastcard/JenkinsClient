@@ -1,12 +1,16 @@
 package engine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.offbytwo.jenkins.JenkinsServer;
 
 import model.Action;
 import model.Pattern;
 import util.Constants;
 import console.CopyJobsReplacingPatternsAction;
+import exception.EmptyRegexpException;
 import exception.UnknownActionException;
 
 /**
@@ -25,14 +29,16 @@ public class ActionHelpers {
 	 * @param i
 	 * @return the action
 	 * @throws UnknownActionException 
+	 * @throws EmptyRegexpException 
+	 * @throws IOException 
 	 */
-	public static Action createAction(String[] args, String actionArg, int i) throws UnknownActionException {
+	public static Action createAction(String[] args, String actionArg, int i, JenkinsServer jenkinsServer) throws UnknownActionException, IOException, EmptyRegexpException {
 		Action action = null;
 		int forceActionIndex = 0;
 		
 		switch (actionArg) {
 			case Constants.COPY_JOBS_REPLACING_PATTERNS_ARG:
-				action = createCopyJobsReplacingPatternsAction(args, i);
+				action = createCopyJobsReplacingPatternsAction(args, i, jenkinsServer);
 				forceActionIndex = i + 3;
 				break;
 			case Constants.REMOVE_JOBS_ARG:
@@ -60,8 +66,10 @@ public class ActionHelpers {
 	 * @param args
 	 * @param i
 	 * @return the action
+	 * @throws EmptyRegexpException 
+	 * @throws IOException 
 	 */
-	private static Action createCopyJobsReplacingPatternsAction(String[] args, int i) {
+	private static Action createCopyJobsReplacingPatternsAction(String[] args, int i, JenkinsServer jenkinsServer) throws IOException, EmptyRegexpException {
 		Action action = null;
 		List<Pattern> patterns = new ArrayList<Pattern>();
 		
@@ -82,7 +90,7 @@ public class ActionHelpers {
 				}
 				
 				if (!patterns.isEmpty()) {
-					action = new CopyJobsReplacingPatternsAction(jobsRegexp, patterns);
+					action = new CopyJobsReplacingPatternsAction(jenkinsServer, jobsRegexp, patterns);
 				}
 				
 			}
