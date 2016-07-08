@@ -7,22 +7,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import util.Constants;
+
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Job;
 
 import engine.JobManager;
+import exception.CantRetrieveJobsException;
 import exception.EmptyRegexpException;
-import exception.JobAlreadyExistsException;
+import exception.JobCreationFailedException;
 import exception.JobNotFoundException;
 import exception.NoJobsToCopyException;
 import exception.NoPatternsException;
+import exception.NullServerJenkinsException;
 import model.Action;
 import model.Pattern;
 
+/**
+ * The class CopyJobsReplacingPatterns.
+ * 
+ * @author mastcard
+ *
+ */
 public class CopyJobsReplacingPatternsAction extends Action {
 
 	/** The jobs regexp. */
 	private String jobsRegexp;
+
+	/** The job manager. */
+	private JobManager jobManager;
 	
 	/** The patterns. */
 	private List<Pattern> patterns = new ArrayList<Pattern>();
@@ -30,15 +43,13 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	/** The jobs to copy. */
 	private Map<String, Job> jobsToCopy = new HashMap<String, Job>();
 	
-	/** The job manager. */
-	private JobManager jobManager;
-	
 	/**
 	 * Instantiates a new CopyJobsReplacingPatternsAction.
 	 * 
 	 * @param args
+	 * @throws NullServerJenkinsException 
 	 */
-	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer) {
+	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer) throws NullServerJenkinsException {
 		super();
 		jobManager = new JobManager(jenkinsServer);
 	}
@@ -49,8 +60,13 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	 * @param jobRegexp
 	 * @throws EmptyRegexpException 
 	 * @throws IOException 
+	 * @throws NullServerJenkinsException 
+	 * @throws CantRetrieveJobsException 
 	 */
-	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer, String jobRegexp) throws IOException, EmptyRegexpException {
+	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer,
+			String jobRegexp) throws EmptyRegexpException,
+			NullServerJenkinsException, CantRetrieveJobsException {
+		
 		this(jenkinsServer);
 		this.jobsRegexp = jobRegexp;
 		this.jobsToCopy = jobManager.getJobsWithRegexp(jobRegexp);
@@ -63,8 +79,12 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	 * @param patterns
 	 * @throws EmptyRegexpException 
 	 * @throws IOException 
+	 * @throws NullServerJenkinsException 
+	 * @throws CantRetrieveJobsException 
 	 */
-	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer, String jobRegexp, List<Pattern> patterns) throws IOException, EmptyRegexpException {
+	public CopyJobsReplacingPatternsAction(JenkinsServer jenkinsServer,
+			String jobRegexp, List<Pattern> patterns) throws EmptyRegexpException, NullServerJenkinsException, CantRetrieveJobsException {
+		
 		this(jenkinsServer, jobRegexp);
 		this.patterns = patterns;
 	}
@@ -77,7 +97,7 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	 * @throws NoPatternsException 
 	 */
 	@Override
-	public void run() throws NoJobsToCopyException, IOException, JobNotFoundException, NoPatternsException {
+	public void run() throws NoJobsToCopyException, JobNotFoundException, NoPatternsException {
 		check();
 		
 		for (Iterator<Job> it = jobsToCopy.values().iterator(); it.hasNext(); ) {
@@ -87,8 +107,8 @@ public class CopyJobsReplacingPatternsAction extends Action {
 			try {
 				newJobName = jobManager.copyJobReplacingPatterns(job, patterns, true);
 				System.out.println("\tDone : \"" + newJobName + "\"");
-			} catch (JobAlreadyExistsException e) {
-				System.out.println(e);;
+			} catch (JobCreationFailedException e) {
+				System.out.println(e);
 			}
 		}
 	}
@@ -101,10 +121,10 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	 * @throws NoPatternsException 
 	 */
 	@Override
-	public String preview() throws IOException, JobNotFoundException, NoJobsToCopyException, NoPatternsException {
+	public String preview() throws JobNotFoundException, NoJobsToCopyException, NoPatternsException {
 		check();
 		
-		String preview = "The following jobs will be copied :\n";
+		String preview = Constants.CJRP_RESULT_PREVIEW_MESSAGE;
 		int higherJobNameSize = getHigherJobNameSize();
 		
 		for (Iterator<Job> it = jobsToCopy.values().iterator(); it.hasNext(); ) {
@@ -112,7 +132,7 @@ public class CopyJobsReplacingPatternsAction extends Action {
 			String newJobName = null;
 			try {
 				newJobName = jobManager.copyJobReplacingPatterns(job, patterns, false);
-			} catch (JobAlreadyExistsException e) {
+			} catch (JobCreationFailedException e) {
 			}
 			
 			preview += "\t" + job.getName();
@@ -150,9 +170,10 @@ public class CopyJobsReplacingPatternsAction extends Action {
 	 * 
 	 * @param jobsRegexp
 	 * @throws EmptyRegexpException 
+	 * @throws CantRetrieveJobsException 
 	 * @throws IOException 
 	 */
-	public void setJobsRegexp(String jobsRegexp) throws IOException, EmptyRegexpException {
+	public void setJobsRegexp(String jobsRegexp) throws EmptyRegexpException, CantRetrieveJobsException {
 		this.jobsRegexp = jobsRegexp;
 		this.jobsToCopy = jobManager.getJobsWithRegexp(jobsRegexp);
 	}

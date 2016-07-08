@@ -73,10 +73,10 @@ public class Constants {
 	/* ############################ */
 	
 	/** The COPY JOBS REPLACING PATTERNS RESULT PREVIEW MESSAGE. */
-	public static final String CJRP_RESULT_PREVIEW_MESSAGE = "Result preview :";
+	public static final String CJRP_RESULT_PREVIEW_MESSAGE = "The following jobs will be copied :\n";
 	
 	/** The REMOVE JOBS RESULT PREVIEW MESSAGE. */
-	public static final String RJ_RESULT_PREVIEW_MESSAGE = "The following jobs will be definitely deleted :";
+	public static final String RJ_RESULT_PREVIEW_MESSAGE = "The following jobs will be definitely deleted :\n";
 	
 	/** The YES ANSWER. */
 	public static final String YES_ANSWER = "y";

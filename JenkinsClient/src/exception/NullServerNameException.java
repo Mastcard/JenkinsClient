@@ -6,7 +6,7 @@ package exception;
  * @author mastcard
  *
  */
-public class NullServerNameException extends Exception {
+public class NullServerNameException extends JenkinsClientException {
 
 	/** The Serial version UID.*/
 	private static final long serialVersionUID = 1L;
@@ -15,6 +15,7 @@ public class NullServerNameException extends Exception {
 	 * Instantiates a new NullServerNameException.
 	 */
 	public NullServerNameException() {
+		super("There's no server information given in the command.");
 	}
 	
 }

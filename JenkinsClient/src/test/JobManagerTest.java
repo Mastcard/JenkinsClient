@@ -3,7 +3,6 @@ package test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +17,16 @@ import com.offbytwo.jenkins.model.Job;
 
 import engine.ConnectionManager;
 import engine.JobManager;
+import exception.CantRetrieveJobsException;
+import exception.CantRetrieveViewsException;
 import exception.EmptyRegexpException;
 import exception.JenkinsConnectionFailedException;
-import exception.JobAlreadyExistsException;
+import exception.JobCreationFailedException;
 import exception.JobNotFoundException;
+import exception.NullServerJenkinsException;
 import exception.NullServerNameException;
 import exception.SeveralJobsWithSameNameInViewException;
+import exception.WrongURISyntaxException;
 
 /**
  * The Class JobManagerTest.
@@ -45,15 +48,19 @@ public class JobManagerTest {
 		
 		try {
 			jenkinsServer = connectionManager.logOnJenkins();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
 		} catch (JenkinsConnectionFailedException e) {
 			e.printStackTrace();
 		} catch (NullServerNameException e) {
 			e.printStackTrace();
+		} catch (WrongURISyntaxException e) {
+			e.printStackTrace();
 		}
 		
-		jobManager = new JobManager(jenkinsServer);
+		try {
+			jobManager = new JobManager(jenkinsServer);
+		} catch (NullServerJenkinsException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -65,9 +72,7 @@ public class JobManagerTest {
 		
 		try {
 			jobs = jobManager.getUnusedJobs();
-		} catch (SeveralJobsWithSameNameInViewException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (SeveralJobsWithSameNameInViewException | CantRetrieveJobsException | CantRetrieveViewsException e) {
 			e.printStackTrace();
 		}
 		
@@ -86,8 +91,8 @@ public class JobManagerTest {
 		
 		try {
 			jobsWithRegexp = jobManager.getJobsWithRegexp(".*trunk-dev.*");
-		} catch (IOException | EmptyRegexpException e) {
-			e.printStackTrace();
+		} catch (EmptyRegexpException | CantRetrieveJobsException e2) {
+			e2.printStackTrace();
 		}
 		
 		assertNotNull(jobsWithRegexp);
@@ -116,7 +121,7 @@ public class JobManagerTest {
 		
 		try {
 			jobsWithRegexp = jobManager.getJobsWithRegexp(".*4.1.*");
-		} catch (IOException | EmptyRegexpException e) {
+		} catch (EmptyRegexpException | CantRetrieveJobsException e) {
 			e.printStackTrace();
 		}
 		
@@ -164,11 +169,9 @@ public class JobManagerTest {
 		String newJobName = null;
 		try {
 			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.JOB_TO_COPY_NAME, patterns, true);
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (JobNotFoundException e) {
 			e.printStackTrace();
-		} catch (JobAlreadyExistsException e) {
+		} catch (JobCreationFailedException e) {
 			e.printStackTrace();
 		}
 		assertNotNull(newJobName);
@@ -203,11 +206,9 @@ public class JobManagerTest {
 		
 		try {
 			newJobName = jobManager.copyJobReplacingPatterns(TestsConstants.WRONG_JOB_TO_COPY_NAME, patterns, true);
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (JobNotFoundException e) {
 			e.printStackTrace();
-		} catch (JobAlreadyExistsException e) {
+		} catch (JobCreationFailedException e) {
 			e.printStackTrace();
 		}
 		assertNull(newJobName);

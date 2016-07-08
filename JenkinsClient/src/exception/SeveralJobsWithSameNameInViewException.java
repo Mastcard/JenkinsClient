@@ -2,7 +2,7 @@ package exception;
 
 /**
  * The class SevralJobsWithSameNameInViewException.
- * This exception is thrown when, for instance, a job name is showed in a ListView and in a Tests Result view.
+ * This exception is thrown when, for instance, a job name is showed in a ListView and in a Tests Result view, on the same MainView.
  * 
  * @author mastcard
  *

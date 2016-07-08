@@ -6,23 +6,16 @@ package exception;
  * @author mastcard
  *
  */
-public class NoPatternsException extends Exception {
+public class NoPatternsException extends JenkinsClientException {
 
 	/** The Serial version UID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The message. */
-	private String message;
-	
-	public NoPatternsException() {
-		message = "There is no pattern to replace.";
-	}
-	
 	/**
-	 * @see java.lang.Object#toString()
+	 * Instantiates a new NoPatternsException.
 	 */
-	public String toString() {
-		return message;
+	public NoPatternsException() {
+		super("There is no pattern to replace.");
 	}
 	
 }

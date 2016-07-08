@@ -10,14 +10,20 @@ import com.offbytwo.jenkins.JenkinsServer;
 import model.Action;
 import engine.ActionHelpers;
 import engine.ConnectionManager;
+import exception.CantRetrieveJobsException;
+import exception.CantRetrieveViewsException;
 import exception.EmptyRegexpException;
 import exception.JenkinsConnectionFailedException;
 import exception.JobNotFoundException;
 import exception.NoJobsToCopyException;
+import exception.NoJobsToRemoveException;
 import exception.NoPatternsException;
+import exception.NullServerJenkinsException;
 import exception.NullServerNameException;
+import exception.SeveralJobsWithSameNameInViewException;
 import exception.UnknownActionException;
 import exception.WrongCommandException;
+import exception.WrongURISyntaxException;
 import util.Constants;
 
 /**
@@ -27,40 +33,40 @@ import util.Constants;
  *
  */
 public class ConsoleModeMain {
-	
+
 	/** The connection manager. */
 	private ConnectionManager connectionManager;
-	
+
 	/** The jenkins server. */
 	private JenkinsServer jenkinsServer;
-	
+
 	/** The server. */
 	private String server;
-	
+
 	/** The user name. */
 	private String username;
-	
+
 	/** The password. */
 	private String password;
-	
+
 	/** The action. */
 	private Action action;
-	
+
 	/** The boolean server is correct. */
 	private boolean serverIsCorrect;
-	
+
 	/** The boolean user name is correct. */
 	private boolean usernameIsCorrect;
-	
+
 	/** The boolean password is correct. */
 	private boolean passwordIsCorrect;
-	
-	/** The boolean action is correct. */ 
+
+	/** The boolean action is correct. */
 	private boolean actionIsCorrect;
-	
+
 	/** The boolean force is enabled. */
 	private boolean forceIsEnabled;
-	
+
 	/**
 	 * Instantiates a new ConsoleModeMain.
 	 */
@@ -71,28 +77,35 @@ public class ConsoleModeMain {
 	 * Executes command.
 	 * 
 	 * @param args
-	 * @throws WrongCommandException 
-	 * @throws UnknownActionException 
-	 * @throws EmptyRegexpException 
-	 * @throws IOException 
-	 * @throws JenkinsConnectionFailedException 
-	 * @throws URISyntaxException 
-	 * @throws NoPatternsException 
-	 * @throws NoJobsToCopyException 
-	 * @throws JobNotFoundException 
-	 * @throws NullServerNameException 
+	 * @throws WrongCommandException
+	 * @throws UnknownActionException
+	 * @throws EmptyRegexpException
+	 * @throws JenkinsConnectionFailedException
+	 * @throws NoPatternsException
+	 * @throws NoJobsToCopyException
+	 * @throws JobNotFoundException
+	 * @throws NullServerNameException
+	 * @throws NoJobsToRemoveException
+	 * @throws NullServerJenkinsException
+	 * @throws CantRetrieveViewsException
+	 * @throws CantRetrieveJobsException
+	 * @throws SeveralJobsWithSameNameInViewException
+	 * @throws WrongURISyntaxException 
 	 */
 	public void executeCommand(String[] args) throws WrongCommandException,
-			UnknownActionException, IOException, EmptyRegexpException,
-			URISyntaxException, JenkinsConnectionFailedException,
-			JobNotFoundException, NoJobsToCopyException, NoPatternsException, NullServerNameException {
+			UnknownActionException, EmptyRegexpException, JobNotFoundException,
+			NoJobsToCopyException, NoPatternsException,
+			NullServerNameException, NoJobsToRemoveException,
+			NullServerJenkinsException, SeveralJobsWithSameNameInViewException,
+			JenkinsConnectionFailedException, CantRetrieveJobsException,
+			CantRetrieveViewsException, WrongURISyntaxException {
 
 		// Check args
 		if (!checkArgs(args)) {
 			throw new WrongCommandException();
 		}
-		
-		// Preview 
+
+		// Preview
 		boolean confirm;
 		if (!forceIsEnabled) {
 			String preview = action.preview();
@@ -101,7 +114,7 @@ public class ConsoleModeMain {
 		} else {
 			confirm = true;
 		}
-		
+
 		// Run action
 		if (confirm) {
 			System.out.println(Constants.RUN_ACTION_MESSAGE);
@@ -109,53 +122,61 @@ public class ConsoleModeMain {
 			System.out.println(Constants.ACTION_COMPLETED_MESSAGE);
 		}
 	}
-	
+
 	/**
 	 * Check args.
 	 * 
 	 * @param args
 	 * @return true if command is correct, false otherwise
-	 * @throws UnknownActionException 
-	 * @throws EmptyRegexpException 
-	 * @throws IOException 
-	 * @throws JenkinsConnectionFailedException 
-	 * @throws URISyntaxException 
-	 * @throws NullServerNameException 
+	 * @throws UnknownActionException
+	 * @throws EmptyRegexpException
+	 * @throws IOException
+	 * @throws JenkinsConnectionFailedException
+	 * @throws URISyntaxException
+	 * @throws NullServerNameException
+	 * @throws NullServerJenkinsException
+	 * @throws CantRetrieveViewsException
+	 * @throws CantRetrieveJobsException
+	 * @throws SeveralJobsWithSameNameInViewException
+	 * @throws WrongURISyntaxException 
 	 */
-	public boolean checkArgs(String[] args) throws UnknownActionException,
-			IOException, EmptyRegexpException, URISyntaxException,
-			JenkinsConnectionFailedException, NullServerNameException {
-		
+	public boolean checkArgs(String[] args) throws UnknownActionException, EmptyRegexpException,
+			JenkinsConnectionFailedException, NullServerNameException,
+			NullServerJenkinsException, SeveralJobsWithSameNameInViewException,
+			CantRetrieveJobsException, CantRetrieveViewsException, WrongURISyntaxException {
+
 		serverIsCorrect = true;
 		usernameIsCorrect = true;
 		passwordIsCorrect = true;
 		actionIsCorrect = true;
 		forceIsEnabled = false;
-		
+
 		/*
 		 * Retrieves credentials to log on Jenkins server
 		 */
 		server = retrieveServer(args);
 		username = retrieveUsername(args);
 		password = retrievePassword(args);
-		
+
 		/*
 		 * Initiates connection with Jenkins server.
 		 */
 		connectionManager = new ConnectionManager(server, username, password);
 		jenkinsServer = connectionManager.logOnJenkins();
-		
+
 		/*
-		 * Retrieves action and creates it.
-		 * The creation step will help us to know if the command is correct.
+		 * Retrieves action and creates it. The creation step will help us to
+		 * know if the command is correct.
 		 */
-		action = retrieveActionArgAndCreateAction(jenkinsServer, args, Constants.COPY_JOBS_REPLACING_PATTERNS_ARG, Constants.REMOVE_JOBS_ARG);
+		action = retrieveActionArgAndCreateAction(jenkinsServer, args,
+				Constants.COPY_JOBS_REPLACING_PATTERNS_ARG,
+				Constants.REMOVE_JOBS_ARG);
 		if (action != null) {
 			action.setServer(server);
 			action.setUsername(username);
 			action.setPassword(password);
 		}
-		
+
 		return (serverIsCorrect && usernameIsCorrect && passwordIsCorrect && actionIsCorrect);
 	}
 
@@ -172,7 +193,7 @@ public class ConsoleModeMain {
 		}
 		return server;
 	}
-	
+
 	/**
 	 * Retrieves user name.
 	 * 
@@ -186,7 +207,7 @@ public class ConsoleModeMain {
 		}
 		return username;
 	}
-	
+
 	/**
 	 * Retrieves password.
 	 * 
@@ -200,7 +221,7 @@ public class ConsoleModeMain {
 		}
 		return password;
 	}
-	
+
 	/**
 	 * Retrieves arg value.
 	 * 
@@ -213,7 +234,7 @@ public class ConsoleModeMain {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.equalsIgnoreCase(argName)) {
-				argValue = args[i+1];
+				argValue = args[i + 1];
 				if (argValue.charAt(0) != '-') {
 					return argValue;
 				}
@@ -221,56 +242,68 @@ public class ConsoleModeMain {
 		}
 		return argValue;
 	}
-	
+
 	/**
 	 * Retrieves action arg.
 	 * 
 	 * @param args
 	 * @param actionArgs
 	 * @return
-	 * @throws UnknownActionException 
-	 * @throws EmptyRegexpException 
-	 * @throws IOException 
+	 * @throws UnknownActionException
+	 * @throws EmptyRegexpException
+	 * @throws IOException
+	 * @throws NullServerJenkinsException
+	 * @throws CantRetrieveViewsException
+	 * @throws CantRetrieveJobsException
+	 * @throws SeveralJobsWithSameNameInViewException
 	 */
-	private Action retrieveActionArgAndCreateAction(JenkinsServer jenkinsServer, String[] args, String...actionArgs) throws UnknownActionException, IOException, EmptyRegexpException {
+	private Action retrieveActionArgAndCreateAction(
+			JenkinsServer jenkinsServer, String[] args, String... actionArgs)
+			throws UnknownActionException, EmptyRegexpException,
+			NullServerJenkinsException, SeveralJobsWithSameNameInViewException,
+			CantRetrieveJobsException, CantRetrieveViewsException {
+
 		Action action = null;
-		
+
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			for (String actionArg : actionArgs) {
 				if (arg.equalsIgnoreCase(actionArg)) {
-					action = ActionHelpers.createAction(args, arg, i, jenkinsServer);
+					action = ActionHelpers.createAction(args, arg, i,
+							jenkinsServer);
 					break; // 1 action per command
 				}
 			}
- 		}
-		
+		}
+
 		if (action != null) {
 			forceIsEnabled = action.isExecute();
 		} else {
 			actionIsCorrect = false;
 		}
-		
+
 		return action;
 	}
-	
+
 	/**
 	 * Does user confirm.
 	 * 
 	 * @return true if user confirms, false otherwise
 	 */
 	private boolean doesUserConfirm() {
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(System.in));
 		String userAnswer = null;
-		
+
 		// Read answer
 		try {
-			
+
 			do {
 				System.out.println(Constants.ASK_CONFIRMATION_MESSAGE);
 				userAnswer = bufferedReader.readLine();
-			} while (!userAnswer.equalsIgnoreCase(Constants.YES_ANSWER) && !userAnswer.equalsIgnoreCase(Constants.NO_ANSWER));
-			
+			} while (!userAnswer.equalsIgnoreCase(Constants.YES_ANSWER)
+					&& !userAnswer.equalsIgnoreCase(Constants.NO_ANSWER));
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -280,7 +313,7 @@ public class ConsoleModeMain {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (userAnswer.equalsIgnoreCase(Constants.YES_ANSWER)) {
 			return true;
 		} else {
@@ -288,14 +321,14 @@ public class ConsoleModeMain {
 		}
 
 	}
-	
+
 	/**
 	 * Print help.
 	 */
 	public void printHelp() {
 		System.out.println(Constants.HELP_MESSAGE);
 	}
-	
+
 	/**
 	 * Gets the jenkins server.
 	 * 
@@ -304,7 +337,7 @@ public class ConsoleModeMain {
 	public JenkinsServer getJenkinsServer() {
 		return jenkinsServer;
 	}
-	
+
 	/**
 	 * Gets the server.
 	 * 
@@ -385,5 +418,5 @@ public class ConsoleModeMain {
 	public boolean isForceIsEnabled() {
 		return forceIsEnabled;
 	}
-	
+
 }

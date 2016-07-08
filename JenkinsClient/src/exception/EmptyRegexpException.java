@@ -6,26 +6,16 @@ package exception;
  * @author mastcard
  *
  */
-public class EmptyRegexpException extends Exception {
+public class EmptyRegexpException extends JenkinsClientException {
 
-	/** The serial verion UID. */
+	/** The Serial version UID. */
 	private static final long serialVersionUID = 1L;
-	
-	/** The message. */
-	private String message;
-	
+
 	/**
 	 * Instantiates a new EmptyRegexpException.
 	 */
 	public EmptyRegexpException() {
-		message = "The regular expression is null or empty";
+		super("The regular expression is null or empty");
 	}
-	
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return message;
-	}
-	
+
 }

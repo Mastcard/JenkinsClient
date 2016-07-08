@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import exception.JobNotFoundException;
 import exception.NoJobsToCopyException;
+import exception.NoJobsToRemoveException;
 import exception.NoPatternsException;
 
 /**
@@ -41,8 +42,9 @@ public abstract class Action {
 	 * @throws JobNotFoundException 
 	 * @throws IOException 
 	 * @throws NoPatternsException 
+	 * @throws NoJobsToRemoveException 
 	 */
-	public abstract void run() throws NoJobsToCopyException, IOException, JobNotFoundException, NoPatternsException;
+	public abstract void run() throws NoJobsToCopyException, JobNotFoundException, NoPatternsException, NoJobsToRemoveException;
 	
 	/**
 	 * Preview.
@@ -52,8 +54,9 @@ public abstract class Action {
 	 * @throws IOException 
 	 * @throws NoJobsToCopyException 
 	 * @throws NoPatternsException 
+	 * @throws NoJobsToRemoveException 
 	 */
-	public abstract String preview() throws IOException, JobNotFoundException, NoJobsToCopyException, NoPatternsException;
+	public abstract String preview() throws JobNotFoundException, NoJobsToCopyException, NoPatternsException, NoJobsToRemoveException;
 	
 	/**
 	 * Is execution enabled.

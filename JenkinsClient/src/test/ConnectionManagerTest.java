@@ -2,8 +2,6 @@ package test;
 
 import static org.junit.Assert.*;
 
-import java.net.URISyntaxException;
-
 import org.junit.Test;
 
 import com.offbytwo.jenkins.JenkinsServer;
@@ -11,6 +9,7 @@ import com.offbytwo.jenkins.JenkinsServer;
 import engine.ConnectionManager;
 import exception.JenkinsConnectionFailedException;
 import exception.NullServerNameException;
+import exception.WrongURISyntaxException;
 
 /**
  * The Connection Manager test.
@@ -58,11 +57,11 @@ public class ConnectionManagerTest {
 		
 		try {
 			jenkinsServer = connectionManager.logOnJenkins();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
 		} catch (JenkinsConnectionFailedException e) {
 			e.printStackTrace();
 		} catch (NullServerNameException e) {
+			e.printStackTrace();
+		} catch (WrongURISyntaxException e) {
 			e.printStackTrace();
 		}
 		
