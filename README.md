@@ -4,7 +4,7 @@
 This java client is used to log on a Jenkins server and execute following actions :
 <ol>
     <li>copying a list of jobs (RegExp) replacing a list of patterns</li>
-    <li>removing a list of jobs (RegExp) or all the unused jobs (created but not used by any view)</li>
+    <li>removing a list of jobs (RegExp) or all the unused jobs (created but not used in any view)</li>
 </ol>
 
 New actions could be added later.
